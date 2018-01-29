@@ -3,7 +3,7 @@
 @section('title', 'Page Title')
 
 @section('content')
-    <div class="section" id="id1">
+    <div class="section" id="header">
         <h1>
             @empty ($currentGroup)
                 Добро пожаловать!
@@ -14,7 +14,7 @@
                     Группа методов "{{ $currentGroup }}"
                 @endif
             @endempty
-            <a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a>
+            <a class="headerlink" href="#header" title="Ссылка на этот заголовок">¶</a>
         </h1>
         @empty ($currentGroup)
             <p>Содержание:</p>

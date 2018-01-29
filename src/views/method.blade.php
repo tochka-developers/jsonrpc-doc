@@ -8,7 +8,9 @@
             {{ $methodInfo['name'] }}
             <a class="headerlink" href="#header" title="Ссылка на этот заголовок">¶</a>
         </h1>
-        <p>{{ $methodInfo['description'] }}</p>
+        @if (isset($methodInfo['description']))
+            <p>{{ $methodInfo['description'] }}</p>
+        @endif
         @if (!empty($methodInfo['note']))
             <div class="admonition note">
                 <p class="first admonition-title">Примечание</p>
@@ -50,7 +52,7 @@
                 @endif
                 <a class="headerlink" href="#return" title="Ссылка на этот заголовок">¶</a>
             </h3>
-            {{ $methodInfo['returns']['description'] ?? '' }}
+            <p>{{ isset($methodInfo['returns']['description']) ? $methodInfo['returns']['description'] : '' }}</p>
             @if (!empty($methodInfo['returnParameters']))
                 @include('jsonrpcdoc::partials.returns', ['parameters' => $methodInfo['returnParameters']])
             @endif

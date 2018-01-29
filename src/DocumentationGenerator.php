@@ -38,8 +38,12 @@ class DocumentationGenerator extends Command
                 $this->output->error('"' . $name . '": No server address found. Parameter "url" in configuration empty, parameter "routes" in local jsonrpc server empty.');
                 return false;
             }
-
-            $connection['url'] = url(array_first($jsonrpcRoutes));
+            
+            if (is_lumen()) {
+                $connection['url'] = trim(config('jsonrpcdoc.host'), '/') . '/' . trim(array_first($jsonrpcRoutes), '/');
+            } else {
+                $connection['url'] = url(array_first($jsonrpcRoutes));
+            }
         }
         $smd = $this->getSmdScheme($connection['url'] . '?smd');
 
@@ -70,7 +74,13 @@ class DocumentationGenerator extends Command
 
         $smd->services = $groups;
 
-        \Storage::put(self::DEFAULT_PATH . '/' . $name . '.smd.json', json_encode($smd));
+        $folder = storage_path('app' . DIRECTORY_SEPARATOR . self::DEFAULT_PATH);
+
+        if (!is_dir($folder)) {
+            mkdir($folder);
+        }
+        file_put_contents($folder . DIRECTORY_SEPARATOR . $name . '.smd.json', json_encode($smd));
+        $this->output->success('Saving SMD for connection "' . $name . '" successfull.');
 
         return true;
     }

@@ -31,7 +31,7 @@ class ServiceProvider extends BaseServiceProvider
         // TODO: Implement register() method.
     }
 
-    public static function route($router = null, $serviceName = null)
+    public static function route($serviceName = null)
     {
         if (empty($serviceName)) {
             $serviceName = config('jsonrpcdoc.default');
@@ -45,26 +45,50 @@ class ServiceProvider extends BaseServiceProvider
             throw new \RuntimeException('Не указан сервис, для которого необходимо отображать документацию');
         }
 
-        if ($router !== null) {
-            $router->get('{group?}', [
-                'uses' => DocumentationController::class . '@index',
-                'service_name' => $serviceName
-            ])->name('jsonrpcdoc.main');
-
-            $router->get('{group}/{method}', [
-                'uses' => DocumentationController::class . '@method',
-                'service_name' => $serviceName
-            ])->name('jsonrpcdoc.method');
+        if (is_lumen()) {
+            self::routeForLumen($serviceName);
         } else {
-            \Route::get('{group?}', [
-                'uses' => DocumentationController::class . '@index',
-                'service_name' => $serviceName
-            ])->name('jsonrpcdoc.main');
-
-            \Route::get('{group}/{method}', [
-                'uses' => DocumentationController::class . '@method',
-                'service_name' => $serviceName
-            ])->name('jsonrpcdoc.method');
+            self::routeForLaravel($serviceName);
         }
+    }
+
+    protected static function routeForLumen($serviceName = null)
+    {
+        $router = app();
+
+        if (version_compare(getVersion(), '5.5', '>=')) {
+            $router = $app->router;
+        }
+
+        $router->get('', [
+            'as' => 'jsonrpcdoc.main',
+            'uses' => LumenController::class . '@index',
+            'service_name' => $serviceName
+        ]);
+
+        $router->get('{group}', [
+            'as' => 'jsonrpcdoc.group',
+            'uses' => LumenController::class . '@index',
+            'service_name' => $serviceName
+        ]);
+
+        $router->get('{group}/{method}', [
+            'as' => 'jsonrpcdoc.method',
+            'uses' => LumenController::class . '@method',
+            'service_name' => $serviceName
+        ]);
+    }
+
+    protected static function routeForLaravel($serviceName = null)
+    {
+        \Route::get('{group?}', [
+            'uses' => LaravelController::class . '@index',
+            'service_name' => $serviceName
+        ])->name('jsonrpcdoc.main');
+
+        \Route::get('{group}/{method}', [
+            'uses' => DocumentationController::class . '@method',
+            'service_name' => $serviceName
+        ])->name('jsonrpcdoc.method');
     }
 }

@@ -2,7 +2,7 @@
     @foreach ($parameters as $parameter)
         <li>
             @php
-                $type = $parameter['type'] ?? 'mixed';
+                $type = isset($parameter['type']) ? $parameter['type'] : 'mixed';
                 $name = uniqid($parameter['name']);
                 if (!empty($parameter['parameters'])) {
                     $inlineParameters = $parameter['parameters'];
@@ -20,7 +20,7 @@
             <code class="docutils {{ empty($parameter['optional']) ? 'required' : 'literal' }}">{{ $parameter['name'] }}</code>
             <span class="guilabel">{{ $type }}{{ !empty($parameter['array']) ? '[]' : '' }}</span>
 
-            @if (isset($parameter['default']) || !empty($parameter['optional']) || $type === 'enum')
+            @if (isset($parameter['default']) || !empty($parameter['optional']) || $type === 'enum' || ($type === 'date' && !empty($parameter['typeFormat'])))
                 <input type="checkbox" name="additional-{{ $name }}"
                        id="additional-{{ $name }}"
                        class="show-additional">
@@ -38,6 +38,11 @@
                         <div class="default">
                             Значение по умолчанию: <code class="docutils"><span
                                         class="pre">{{ $parameter['default'] }}</span></code>
+                        </div>
+                    @endif
+                    @if ($type === 'date' && !empty($parameter['typeFormat']))
+                        <div class="enum">
+                            Формат даты: <code class="docutils"><span class="pre">{{ $parameter['typeFormat'] }}</span></code>
                         </div>
                     @endif
                     @if ($type === 'enum')

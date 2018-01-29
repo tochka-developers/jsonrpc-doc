@@ -2,7 +2,7 @@
     @foreach ($parameters as $parameter)
         <li>
             @php
-                $type = $parameter['type'] ?? 'mixed';
+                $type = isset($parameter['type']) ? $parameter['type'] : 'mixed';
                 $name = uniqid($parameter['name']);
                 if (!empty($parameter['parameters'])) {
                     $inlineParameters = $parameter['parameters'];
