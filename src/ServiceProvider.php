@@ -31,7 +31,7 @@ class ServiceProvider extends BaseServiceProvider
         // TODO: Implement register() method.
     }
 
-    public static function route($serviceName = null)
+    public static function route($router = null, $serviceName = null)
     {
         if (empty($serviceName)) {
             $serviceName = config('jsonrpcdoc.default');
@@ -45,14 +45,26 @@ class ServiceProvider extends BaseServiceProvider
             throw new \RuntimeException('Не указан сервис, для которого необходимо отображать документацию');
         }
 
-        \Route::get('{group?}', [
-            'uses' => DocumentationController::class . '@index',
-            'service_name' => $serviceName
-        ])->name('jsonrpcdoc.main');
+        if ($router !== null) {
+            $router->get('{group?}', [
+                'uses' => DocumentationController::class . '@index',
+                'service_name' => $serviceName
+            ])->name('jsonrpcdoc.main');
 
-        \Route::get('{group}/{method}', [
-            'uses' => DocumentationController::class . '@method',
-            'service_name' => $serviceName
-        ])->name('jsonrpcdoc.method');
+            $router->get('{group}/{method}', [
+                'uses' => DocumentationController::class . '@method',
+                'service_name' => $serviceName
+            ])->name('jsonrpcdoc.method');
+        } else {
+            \Route::get('{group?}', [
+                'uses' => DocumentationController::class . '@index',
+                'service_name' => $serviceName
+            ])->name('jsonrpcdoc.main');
+
+            \Route::get('{group}/{method}', [
+                'uses' => DocumentationController::class . '@method',
+                'service_name' => $serviceName
+            ])->name('jsonrpcdoc.method');
+        }
     }
 }
