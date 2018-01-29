@@ -1,0 +1,129 @@
+﻿pre {
+    margin: 0;
+}
+
+.rst-content .toctree-wrapper a.internal:visited,
+.wy-breadcrumbs li a:visited {
+    color: #2980B9;
+}
+
+.rst-content .toctree-wrapper ul li {
+    margin-bottom: 10px;
+}
+
+.rst-content .toctree-wrapper ul li .description {
+    color: #5f5e5e;
+}
+
+.rst-content code.hljs {
+    font-size: 12px;
+    font-weight: normal;
+    color: #333;
+    background-color: #fff;
+    white-space: pre;
+    padding: 12px;
+}
+
+.rst-content code.required {
+    color: #E74C3C;
+}
+.rst-content code.literal {
+    color: #35698e;
+}
+
+.rst-content .section .additional .required {
+    color: #E74C3C;
+}
+
+.rst-content .section ul.simple li {
+    list-style: none;
+    position: relative;
+}
+
+.rst-content .section ul.simple ul {
+    display: none;
+}
+
+.rst-content .section ul.simple li > input.show-parameters,
+.rst-content .section ul.simple li > input.show-additional {
+    display: none;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ ul {
+    display: block;
+    position: relative;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ ul:before {
+    border-left: 1px dotted #e6e6e6;
+    position: absolute;
+    content: '';
+    left: -18px;
+    top: 0;
+    width: 1px;
+    height: 100%;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ ul > li {
+    position: relative;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ ul > li:before {
+    position: absolute;
+    content: '';
+    left: -42px;
+    top: 13px;
+    width: 30px;
+    height: 1px;
+    border-top: 1px dotted #e6e6e6;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ ul > li:last-child:before {
+    background: #fff;
+    height: 100%;
+}
+
+.rst-content .section ul.simple li > input.show-parameters ~ label {
+    position: absolute;
+    top: 2px;
+    left: -25px;
+    width: 20px;
+    background: #fff;
+    padding-left: 5px;
+}
+
+.rst-content .section ul.simple li > input.show-parameters ~ label > .fa {
+    transition: transform .1s linear;
+}
+
+.rst-content .section ul.simple li > input.show-parameters:checked ~ label > .fa {
+    transform: rotate(90deg);
+}
+
+.rst-content .section .additional {
+    font-size: .8em;
+    color: #a2a2a2;
+    display: none;
+    margin-bottom: 5px;
+    padding-left: 25px;
+    background-color: #f9f9f9;
+}
+
+.rst-content .section input.show-additional + label {
+    display: inline;
+    font-size: 100%;
+}
+
+
+.rst-content .section input.show-additional + label .fa {
+    transition: transform .15s linear;
+}
+
+.rst-content .section input.show-additional:checked + label .fa {
+    transform: rotate(180deg);
+}
+
+.rst-content .section input.show-additional:checked ~ .additional {
+    display: block;
+    position: relative;
+}
