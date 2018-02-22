@@ -81,10 +81,15 @@ class ServiceProvider extends BaseServiceProvider
 
     protected static function routeForLaravel($serviceName = null)
     {
-        \Route::get('{group?}', [
+        \Route::get('', [
             'uses' => LaravelController::class . '@index',
             'service_name' => $serviceName
         ])->name('jsonrpcdoc.main');
+
+        \Route::get('{group}', [
+            'uses' => LaravelController::class . '@index',
+            'service_name' => $serviceName
+        ])->name('jsonrpcdoc.group');
 
         \Route::get('{group}/{method}', [
             'uses' => DocumentationController::class . '@method',
