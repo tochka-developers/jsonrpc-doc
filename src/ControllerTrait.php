@@ -11,7 +11,6 @@ trait ControllerTrait
      * @param Request $request
      *
      * @return mixed
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function getSmd(Request $request)
     {
@@ -27,6 +26,13 @@ trait ControllerTrait
         $data['serviceVersion'] = '1.0.0';
     }
 
+    /**
+     * @param $smd
+     * @param $method
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function getRequestExample($smd, $method)
     {
         $request = [
@@ -41,7 +47,7 @@ trait ControllerTrait
 
         $request['params'] = $this->getParameters($method['parameters'], $enumObjects, $objects, !empty($smd['namedParameters']));
 
-        return json_encode($request, JSON_PRETTY_PRINT);
+        return json_encode($request, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     protected function getResponseExample($smd, $method)
@@ -60,9 +66,18 @@ trait ControllerTrait
             $response['result'] = [$response['result']];
         }
 
-        return json_encode($response, JSON_PRETTY_PRINT);
+        return json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @param      $smdParameters
+     * @param      $enumObjects
+     * @param      $objects
+     * @param bool $is_naming
+     *
+     * @return array
+     * @throws \Exception
+     */
     protected function getParameters($smdParameters, $enumObjects, $objects, $is_naming = true)
     {
         $params = [];
@@ -83,9 +98,17 @@ trait ControllerTrait
         return $params;
     }
 
+    /**
+     * @param $smdParameter
+     * @param $enumObjects
+     * @param $objects
+     *
+     * @return array|int
+     * @throws \Exception
+     */
     protected function getParamValue($smdParameter, $enumObjects, $objects)
     {
-        if (!empty($smdParameter['example'])) {
+        if (array_key_exists('example', $smdParameter)) {
             return $smdParameter['example'];
         }
 
@@ -96,7 +119,7 @@ trait ControllerTrait
         switch (strtolower($smdParameter['type'])) {
             case 'int':
             case 'integer':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return (int)$smdParameter['default'];
                 }
 
@@ -104,43 +127,43 @@ trait ControllerTrait
             case 'float':
             case 'double':
             case 'real':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return (float)$smdParameter['default'];
                 }
 
                 return random_int(0, 10000) / random_int(0, 5);
             case 'string':
             case 'str':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return (string)$smdParameter['default'];
                 }
 
                 return str_random(random_int(5, 16));
             case 'mixed':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return $smdParameter['default'];
                 }
 
                 return (string)random_int(0, 10000);
             case 'bool':
             case 'boolean':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return (bool)$smdParameter['default'];
                 }
 
                 return (bool)random_int(0, 1);
             case 'date':
             case 'datetime':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return $smdParameter['default'];
                 }
-                if (!empty($smdParameter['typeFormat'])) {
+                if (isset($smdParameter['typeFormat'])) {
                     return Carbon::now()->format($smdParameter['typeFormat']);
                 }
 
                 return Carbon::now()->toDateTimeString();
             case 'enum':
-                if (!empty($smdParameter['default'])) {
+                if (array_key_exists('default', $smdParameter)) {
                     return $smdParameter['default'];
                 }
                 if (!empty($smdParameter['typeVariants'])) {
