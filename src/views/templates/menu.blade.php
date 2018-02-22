@@ -2,7 +2,7 @@
     <ul class="current">
         @foreach ($smd['services'][$parent]['methods'] as $methodKey => $method)
             <li class="toctree-l1 {{ $methodKey === $currentMethod ? 'current' : '' }}">
-                <a class="current reference internal" href="{{ route('jsonrpcdoc.method', ['group' => $parent, 'method' => $methodKey]) }}">
+                <a class="current reference internal" href="{{ route('jsonrpcdoc.method', ['group' => $parent, 'method' => $methodKey], false) }}">
                     <strong>{{ $method['name'] }}</strong><br>
                     @if (!empty($method['description']))
                         <span class="description">{{ $method['description'] }}</span>
@@ -14,25 +14,25 @@
 @else
     <ul class="current">
         @foreach ($smd['services'] as $groupKey => $group)
-        <li class="toctree-l1 {{ $groupKey === $currentGroup ? 'current' : '' }}">
-            <a class="current reference internal" href="{{ route('jsonrpcdoc.group', ['group' => $groupKey]) }}">
-                @if (!empty($group['methods']))
-                    <span class="toctree-expand"></span>
+            <li class="toctree-l1 {{ $groupKey === $currentGroup ? 'current' : '' }}">
+                <a class="current reference internal" href="{{ route('jsonrpcdoc.group', ['group' => $groupKey], false) }}">
+                    @if (!empty($group['methods']))
+                        <span class="toctree-expand"></span>
+                    @endif
+                    {{ isset($group['description']) ? $group['description'] : $group['name'] }}
+                </a>
+                @if ($groupKey === $currentGroup || $exposed)
+                    <ul>
+                        @foreach ($group['methods'] as $methodKey => $method)
+                            <li class="toctree-l2 {{ $methodKey === $currentMethod ? 'current' : '' }}">
+                                <a class="reference internal" href="{{ route('jsonrpcdoc.method', ['group' => $groupKey, 'method' => $methodKey], false) }}">
+                                    {{ $method['name'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 @endif
-                {{ isset($group['description']) ? $group['description'] : $group['name'] }}
-            </a>
-            @if ($groupKey === $currentGroup || $exposed)
-            <ul>
-                @foreach ($group['methods'] as $methodKey => $method)
-                    <li class="toctree-l2 {{ $methodKey === $currentMethod ? 'current' : '' }}">
-                        <a class="reference internal" href="{{ route('jsonrpcdoc.method', ['group' => $groupKey, 'method' => $methodKey]) }}">
-                            {{ $method['name'] }}
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-            @endif
-        </li>
+            </li>
         @endforeach
     </ul>
 @endif
