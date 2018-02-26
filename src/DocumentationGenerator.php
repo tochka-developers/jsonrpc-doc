@@ -97,7 +97,8 @@ class DocumentationGenerator extends Command
         $curl = curl_init($host);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: application/json']);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: application/json', 'Content-Length: 0']);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'JsonRpc Documentation Server');
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
