@@ -9,66 +9,66 @@
             <a class="headerlink" href="#header" title="Ссылка на этот заголовок">¶</a>
         </h1>
         @if (isset($methodInfo['description']))
-            <p>{{ $methodInfo['description'] }}</p>
+            <p>{!! nl2br(e($methodInfo['description'])) !!}</p>
         @endif
         @if (!empty($methodInfo['note']))
             <div class="admonition note">
                 <p class="first admonition-title">Примечание</p>
-                <p class="last">{{ $methodInfo['note'] }}</p>
+                <p class="last">{!! nl2br(e($methodInfo['note'])) !!}</p>
             </div>
         @endif
         @if (!empty($methodInfo['warning']))
             <div class="admonition warning">
                 <p class="first admonition-title">Внимание</p>
-                <p class="last">{{ $methodInfo['warning'] }}</p>
+                <p class="last">{!! nl2br(e($methodInfo['warning'])) !!}</p>
             </div>
         @endif
         @if (!empty($methodInfo['parameters']))
-        <div class="section" id="parameters">
-            <h3>
-                @if ($smd['namedParameters'])
-                    Именованные параметры:
-                @else
-                    Параметры:
-                @endif
-                <a class="headerlink" href="#parameters" title="Ссылка на этот заголовок">¶</a>
-            </h3>
+            <div class="section" id="parameters">
+                <h3>
+                    @if ($smd['namedParameters'])
+                        Именованные параметры:
+                    @else
+                        Параметры:
+                    @endif
+                    <a class="headerlink" href="#parameters" title="Ссылка на этот заголовок">¶</a>
+                </h3>
 
-            @include('jsonrpcdoc::partials.params', ['parameters' => $methodInfo['parameters']])
-        </div>
+                @include('jsonrpcdoc::partials.params', ['parameters' => $methodInfo['parameters']])
+            </div>
         @endif
         @if (!empty($methodInfo['returns']))
-        <div class="section" id="return">
-            <h3>
-                Результат:
-                @if (!empty($methodInfo['returns']['types']))
-                    @foreach($methodInfo['returns']['types'] as $type)
-                        <span class="guilabel">{{ $type }}</span>
-                    @endforeach
-                @elseif (!empty($methodInfo['returns']['type']))
-                    <span class="guilabel">{{ $methodInfo['returns']['type'] }}</span>
-                @else
-                    <span class="guilabel">mixed</span>
+            <div class="section" id="return">
+                <h3>
+                    Результат:
+                    @if (!empty($methodInfo['returns']['types']))
+                        @foreach($methodInfo['returns']['types'] as $type)
+                            <span class="guilabel">{{ $type }}</span>
+                        @endforeach
+                    @elseif (!empty($methodInfo['returns']['type']))
+                        <span class="guilabel">{{ $methodInfo['returns']['type'] }}</span>
+                    @else
+                        <span class="guilabel">mixed</span>
+                    @endif
+                    <a class="headerlink" href="#return" title="Ссылка на этот заголовок">¶</a>
+                </h3>
+                <p>{{ isset($methodInfo['returns']['description']) ? $methodInfo['returns']['description'] : '' }}</p>
+                @if (!empty($methodInfo['returnParameters']))
+                    @include('jsonrpcdoc::partials.returns', ['parameters' => $methodInfo['returnParameters']])
                 @endif
-                <a class="headerlink" href="#return" title="Ссылка на этот заголовок">¶</a>
-            </h3>
-            <p>{{ isset($methodInfo['returns']['description']) ? $methodInfo['returns']['description'] : '' }}</p>
-            @if (!empty($methodInfo['returnParameters']))
-                @include('jsonrpcdoc::partials.returns', ['parameters' => $methodInfo['returnParameters']])
-            @endif
-        </div>
+            </div>
         @endif
         @if (!empty($methodInfo['requestExample']))
-        <div class="section" id="requestExample">
-            <h3>
-                Пример запроса:
-                <a class="headerlink" href="#requestExample" title="Ссылка на этот заголовок">¶</a>
+            <div class="section" id="requestExample">
+                <h3>
+                    Пример запроса:
+                    <a class="headerlink" href="#requestExample" title="Ссылка на этот заголовок">¶</a>
 
-                <pre>
+                    <pre>
                     <code class="json">{{ $methodInfo['requestExample'] }}</code>
                 </pre>
-            </h3>
-        </div>
+                </h3>
+            </div>
         @endif
         @if (!empty($methodInfo['responseExample']))
             <div class="section" id="responseExample">

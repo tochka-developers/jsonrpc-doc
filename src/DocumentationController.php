@@ -68,6 +68,35 @@ class DocumentationController extends Controller
             $methodInfo['responseExample'] = $this->getResponseExample($smd, $methodInfo);
         }
 
+        if (!empty($methodInfo['returnParameters'])) {
+            foreach ($methodInfo['returnParameters'] as $parameter) {
+                if (!empty($parameter['is_root'])) {
+                    $type = isset($parameter['type']) ? $parameter['type'] : 'mixed';
+                    if (!empty($parameter['parameters'])) {
+                        $inlineParameters = $parameter['parameters'];
+                    } elseif (isset($methodInfo['objects'][$type]['parameters'])) {
+                        $inlineParameters = $methodInfo['objects'][$type]['parameters'];
+                        $type = 'object';
+                    } elseif (isset($smd['objects'][$type]['parameters'])) {
+                        $inlineParameters = $smd['objects'][$type]['parameters'];
+                        $type = 'object';
+                    } else {
+                        $inlineParameters = [];
+                    }
+
+                    if (!empty($parameter['array'])) {
+                        $type = 'array';
+                    }
+
+                    $methodInfo['returns']['type'] = $type;
+                    $methodInfo['returns']['description'] = $parameter['description'] ?? null;
+                    $methodInfo['returns']['types'] = [$type];
+                    $methodInfo['returnParameters'] = $inlineParameters;
+                    break;
+                }
+            }
+        }
+
         $data = [
             'smd'   => $smd,
             'currentGroup' => $group,
@@ -114,7 +143,7 @@ class DocumentationController extends Controller
 
         $request['params'] = $this->getParameters($method['parameters'], $enumObjects, $objects, !empty($smd['namedParameters']));
 
-        return json_encode($request, JSON_PRETTY_PRINT);
+        return json_encode($request, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     private function getResponseExample($smd, $method)
@@ -133,7 +162,7 @@ class DocumentationController extends Controller
             $response['result'] = [$response['result']];
         }
 
-        return json_encode($response, JSON_PRETTY_PRINT);
+        return json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     private function getParameters($smdParameters, $enumObjects, $objects, $is_naming = true)
