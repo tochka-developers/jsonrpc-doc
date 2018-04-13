@@ -71,7 +71,8 @@ class DocumentationController extends Controller
         if (!empty($methodInfo['returnParameters'])) {
             foreach ($methodInfo['returnParameters'] as $parameter) {
                 if (!empty($parameter['is_root'])) {
-                    $type = isset($parameter['type']) ? $parameter['type'] : 'mixed';
+                    $type = isset($parameter['typeAdditional']) ? $parameter['typeAdditional'] : (isset($parameter['type']) ? $parameter['type'] : 'mixed');
+
                     if (!empty($parameter['parameters'])) {
                         $inlineParameters = $parameter['parameters'];
                     } elseif (isset($methodInfo['objects'][$type]['parameters'])) {
@@ -195,7 +196,10 @@ class DocumentationController extends Controller
             return (string)random_int(0, 10000);
         }
 
-        switch (strtolower($smdParameter['type'])) {
+        $reserveType = isset($smdParameter['type']) ? $smdParameter['type'] : 'mixed';
+        $type = isset($smdParameter['typeAdditional']) ? $smdParameter['typeAdditional'] : $reserveType;
+
+        switch ($type) {
             case 'int':
             case 'integer':
                 if (!empty($smdParameter['default'])) {
@@ -250,7 +254,8 @@ class DocumentationController extends Controller
                         return $variants[random_int(0, \count($variants) - 1)]['value'];
                     }
                 }
-                return random_int(0, 10000);
+                unset($smdParameter['typeAdditional']);
+                return $this->getParamValue($smdParameter, $enumObjects, $objects);
             default:
                 if (!empty($smdParameter['parameters'])) {
                     return $this->getParameters($smdParameter['parameters'], $enumObjects, $objects);

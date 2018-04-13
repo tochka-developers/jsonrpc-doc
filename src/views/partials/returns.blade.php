@@ -3,24 +3,34 @@
         <li>
             @php
                 $type = isset($parameter['type']) ? $parameter['type'] : 'mixed';
+                $additionalType = isset($parameter['typeAdditional']) ? $parameter['typeAdditional'] : null;
                 $name = uniqid($parameter['name']);
+
                 if (!empty($parameter['parameters'])) {
                     $inlineParameters = $parameter['parameters'];
-                } elseif (isset($methodInfo['objects'][$type]['parameters'])) {
-                    $inlineParameters = $methodInfo['objects'][$type]['parameters'];
+                } elseif (isset($methodInfo['objects'][$additionalType]['parameters'])) {
+                    $inlineParameters = $methodInfo['objects'][$additionalType]['parameters'];
                     $type = 'object';
-                } elseif (isset($smd['objects'][$type]['parameters'])) {
-                    $inlineParameters = $smd['objects'][$type]['parameters'];
+                } elseif (isset($smd['objects'][$additionalType]['parameters'])) {
+                    $inlineParameters = $smd['objects'][$additionalType]['parameters'];
                     $type = 'object';
                 } else {
                     $inlineParameters = [];
+                }
+
+                if ($additionalType === 'enum' && !empty($parameter['typeVariants']) && !is_array($parameter['typeVariants'])) {
+                    if (isset($methodInfo['enumObjects'][$parameter['typeVariants']]['type'])) {
+                        $type = $methodInfo['enumObjects'][$parameter['typeVariants']]['type'];
+                    } elseif (isset($smd['enumObjects'][$parameter['typeVariants']]['type'])) {
+                        $type = $smd['enumObjects'][$parameter['typeVariants']]['type'];
+                    }
                 }
             @endphp
 
             <code class="docutils literal">{{ $parameter['name'] }}</code>
             <span class="guilabel">{{ $type }}{{ !empty($parameter['array']) ? '[]' : '' }}</span>
 
-            @if ($type === 'enum')
+            @if ($additionalType === 'enum' || ($additionalType === 'date' && !empty($parameter['typeFormat'])))
                 <input type="checkbox" name="additional-{{ $name }}"
                        id="additional-{{ $name }}"
                        class="show-additional">
@@ -29,7 +39,12 @@
                     <i class="fa fa-caret-down"></i>
                 </label>
                 <div class="additional">
-                    @if ($type === 'enum')
+                    @if ($additionalType === 'date' && !empty($parameter['typeFormat']))
+                        <div class="enum">
+                            Формат даты: <code class="docutils"><span class="pre">{{ $parameter['typeFormat'] }}</span></code>
+                        </div>
+                    @endif
+                    @if ($additionalType === 'enum')
                         @if (is_array($parameter['typeVariants']))
                             <div class="enum">Возможные значения:
                                 @foreach ($parameter['typeVariants'] as $variant)
@@ -46,10 +61,10 @@
                                     $variants = $smd['enumObjects'][$parameter['typeVariants']]['values'];
                                 }
                             @endphp
-                                @foreach ($variants as $variant)
-                                    <code class="docutils"><span class="pre">{{ $variant['value'] }}</span></code>
-                                    {{ !empty($variant['description']) ? '- '.$variant['description'] : '' }}<br>
-                                @endforeach
+                            @foreach ($variants as $variant)
+                                <code class="docutils"><span class="pre">{{ $variant['value'] }}</span></code>
+                                {{ !empty($variant['description']) ? '- '.$variant['description'] : '' }}<br>
+                            @endforeach
                         @endif
                     @endif
                 </div>
