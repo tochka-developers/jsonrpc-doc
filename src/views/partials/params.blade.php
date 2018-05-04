@@ -47,7 +47,7 @@
                     @if (isset($parameter['default']))
                         <div class="default">
                             Значение по умолчанию: <code class="docutils"><span
-                                        class="pre">{{ $parameter['default'] }}</span></code>
+                                        class="pre">{{ var_export($parameter['default'], true) }}</span></code>
                         </div>
                     @endif
                     @if ($additionalType === 'date' && !empty($parameter['typeFormat']))
