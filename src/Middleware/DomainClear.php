@@ -1,13 +1,12 @@
 <?php
 
-namespace Tochka\JsonRpcDoc;
+namespace Tochka\JsonRpcDoc\Middleware;
 
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DomainClearMiddleware
+class DomainClear
 {
-    public function handle (Request $request, $next, $subdomain)
+    public function handle(Request $request, $next, $subdomain)
     {
         $request->route()->forgetParameter('domain');
         $request->route()->forgetParameter('tld');

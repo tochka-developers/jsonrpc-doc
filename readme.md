@@ -25,7 +25,7 @@ protected function mapWebRoutes()
     // важно использовать роутинг с поддоменоном ВЫШЕ роутинга основного домена
     Route::group([
         'domain' => 'SUBDOMAIN.{domain}.{tld}',
-        'middleware' => \Tochka\JsonRpcDoc\DomainClearMiddleware::class
+        'middleware' => \Tochka\JsonRpcDoc\Middleware\DomainClear::class
     ], function() {
         \Tochka\JsonRpcDoc\ServiceProvider::route();
     });
@@ -66,7 +66,7 @@ $app->group([
 
 // если хотите использовать поддомен (замените SUBDOMAIN на необходимый):
 $app->routeMiddleware([
-    'subdomain' => \Tochka\JsonRpcDoc\SubDomainMiddleware::class,
+    'subdomain' => \Tochka\JsonRpcDoc\Middleware\SubDomain::class,
 ]);
 
 $app->group([

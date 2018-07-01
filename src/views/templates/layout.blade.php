@@ -19,7 +19,7 @@
                 <a href="{{ route('jsonrpcdoc.main', [], false) }}" class="icon icon-home"> {{ $serviceName }}</a>
                 <div class="version">{{ $serviceVersion }}</div>
 
-                @include('jsonrpcdoc::templates.searchbox')
+                {{--@include('jsonrpcdoc::templates.searchbox')--}}
             </div>
 
             <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">

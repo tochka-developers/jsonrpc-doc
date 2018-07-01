@@ -1,9 +1,10 @@
 <?php
 
-namespace Tochka\JsonRpcDoc;
+namespace Tochka\JsonRpcDoc\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Tochka\JsonRpcDoc\DocumentationGenerator;
 
 trait ControllerTrait
 {
@@ -11,6 +12,7 @@ trait ControllerTrait
      * @param Request $request
      *
      * @return mixed
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function getSmd(Request $request)
     {
@@ -50,6 +52,13 @@ trait ControllerTrait
         return json_encode($request, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @param $smd
+     * @param $method
+     *
+     * @return string
+     * @throws \Exception
+     */
     protected function getResponseExample($smd, $method)
     {
         $response = [
@@ -188,5 +197,10 @@ trait ControllerTrait
                     return $this->getParameters($objects[$smdParameter['type']]['parameters'], $enumObjects, $objects);
                 }
         }
+    }
+
+    public function getLinks($request)
+    {
+        return config('jsonrpcdoc.connections.' . $request->route()->getAction()['service_name'] . '.links', []);
     }
 }
