@@ -1,13 +1,12 @@
 <?php
 
-namespace Tochka\JsonRpcDoc;
+namespace Tochka\JsonRpcDoc\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
+use Laravel\Lumen\Routing\Controller as BaseController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class LaravelController extends BaseController
+class LumenController extends BaseController
 {
     use ControllerTrait;
 
@@ -35,6 +34,7 @@ class LaravelController extends BaseController
             'smd'           => $smd,
             'currentGroup'  => $group,
             'currentMethod' => null,
+            'links'         => $this->getLinks($request),
         ];
 
         $this->prepareVars($smd, $data);
@@ -50,6 +50,7 @@ class LaravelController extends BaseController
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     public function method(Request $request, $group, $method)
     {
@@ -74,10 +75,19 @@ class LaravelController extends BaseController
             'currentGroup'  => $group,
             'currentMethod' => $method,
             'methodInfo'    => $methodInfo,
+            'links'         => $this->getLinks($request),
         ];
 
         $this->prepareVars($smd, $data);
 
         return view('jsonrpcdoc::method', $data);
+    }
+
+    protected function getSmd(Request $request)
+    {
+        $serviceName = $request->route()[1]['service_name'];
+        $file = file_get_contents(storage_path('app' . DIRECTORY_SEPARATOR . DocumentationGenerator::DEFAULT_PATH . DIRECTORY_SEPARATOR . $serviceName . '.smd.json'));
+
+        return json_decode($file, true);
     }
 }

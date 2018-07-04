@@ -34,5 +34,15 @@
                 @endif
             </li>
         @endforeach
+        @if(!empty($links))
+            <hr>
+            <ul>
+                @foreach($links as $link)
+                    <li>
+                        <a href="{{ $link['href'] }}" {{ !empty($link['download']) ? 'download' : '' }}>{{$link['title']}}</a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </ul>
 @endif

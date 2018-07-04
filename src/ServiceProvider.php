@@ -3,6 +3,8 @@
 namespace Tochka\JsonRpcDoc;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Tochka\JsonRpcDoc\Controllers\LaravelController;
+use Tochka\JsonRpcDoc\Controllers\LumenController;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -92,7 +94,7 @@ class ServiceProvider extends BaseServiceProvider
         ])->name('jsonrpcdoc.group');
 
         \Route::get('{group}/{method}', [
-            'uses' => DocumentationController::class . '@method',
+            'uses'         => LaravelController::class . '@method',
             'service_name' => $serviceName
         ])->name('jsonrpcdoc.method');
     }

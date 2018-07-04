@@ -1,11 +1,11 @@
 <?php
 
-namespace Tochka\JsonRpcDoc;
+namespace Tochka\JsonRpcDoc\Middleware;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class SubDomainMiddleware
+class SubDomain
 {
     public function handle (Request $request, $next, $subdomain)
     {

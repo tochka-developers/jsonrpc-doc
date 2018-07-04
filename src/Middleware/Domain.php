@@ -1,10 +1,10 @@
 <?php
 
-namespace Tochka\JsonRpcDoc;
+namespace Tochka\JsonRpcDoc\Middleware;
 
 use Illuminate\Http\Request;
 
-class DomainMiddleware
+class Domain
 {
     public function handle (Request $request, $next)
     {
