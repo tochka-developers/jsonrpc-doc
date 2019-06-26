@@ -5,6 +5,7 @@ namespace Tochka\JsonRpcDoc\Controllers;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Tochka\JsonRpcDoc\DocumentationGenerator;
 
 class LumenController extends BaseController
 {
@@ -27,7 +28,11 @@ class LumenController extends BaseController
         }
 
         if (isset($smd['services'][$group]['methods']) && count($smd['services'][$group]['methods']) === 1) {
-            return \Redirect::to('/' . $group . '/' . array_first($smd['services'][$group]['methods'])['name']);
+            header('Location: ' . route('jsonrpcdoc.method', [
+                    'group'  => $group,
+                    'method' => array_first($smd['services'][$group]['methods'])['name'],
+                ]
+            ));
         }
 
         $data = [

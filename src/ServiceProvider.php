@@ -59,7 +59,7 @@ class ServiceProvider extends BaseServiceProvider
         $router = app();
 
         if (version_compare(getVersion(), '5.5', '>=')) {
-            $router = $app->router;
+            $router = app()->router;
         }
 
         $router->get('', [

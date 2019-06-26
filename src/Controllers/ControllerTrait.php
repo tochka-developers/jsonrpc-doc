@@ -3,7 +3,8 @@
 namespace Tochka\JsonRpcDoc\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Laravel\Lumen\Http\Request;
 use Tochka\JsonRpcDoc\DocumentationGenerator;
 
 trait ControllerTrait
@@ -188,6 +189,23 @@ trait ControllerTrait
                 }
 
                 return random_int(0, 10000);
+            case 'array':
+                if (array_key_exists('default', $smdParameter)) {
+                    return [$smdParameter['default']];
+                }
+                if (!empty($smdParameter['typeVariants'])) {
+                    if (\is_array($smdParameter['typeVariants'])) {
+                        return [$smdParameter['typeVariants'][random_int(0, \count($smdParameter['typeVariants']) - 1)]];
+                    }
+
+                    if (!empty($enumObjects[$smdParameter['typeVariants']]['values'])) {
+                        $variants = $enumObjects[$smdParameter['typeVariants']]['values'];
+
+                        return [$variants[random_int(0, \count($variants) - 1)]['value']];
+                    }
+                }
+
+                return [random_int(0, 10000)];
             default:
                 if (!empty($smdParameter['parameters'])) {
                     return $this->getParameters($smdParameter['parameters'], $enumObjects, $objects);
@@ -199,8 +217,17 @@ trait ControllerTrait
         }
     }
 
-    public function getLinks($request)
+    public function getLinks(Request $request)
     {
-        return config('jsonrpcdoc.connections.' . $request->route()->getAction()['service_name'] . '.links', []);
+
+        $route = $request->route();
+
+        if (is_array($route)) {
+            $service_name = Arr::get($route[1], 'service_name');
+        } else {
+            $service_name = $request->route()->getAction()['service_name'];
+        }
+
+        return config('jsonrpcdoc.connections.' . $service_name . '.links', []);
     }
 }
