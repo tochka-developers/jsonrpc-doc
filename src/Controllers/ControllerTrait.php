@@ -4,6 +4,7 @@ namespace Tochka\JsonRpcDoc\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Tochka\JsonRpcDoc\DocumentationGenerator;
 
 trait ControllerTrait
