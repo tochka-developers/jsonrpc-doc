@@ -8,7 +8,7 @@ class DocumentationGenerator extends Command
 {
     const DEFAULT_PATH = 'jsonrpc-doc';
 
-    protected $signature = 'jsonrpc:generateDocumentation {connection?}';
+    protected $signature = 'jsonrpc:generateDocumentation {connection? : Имя соединения} {--noSecure : Не делать проверку SSL}';
 
     protected $description = 'Generate documentation for JsonRpc server by SMD-scheme';
 
@@ -24,6 +24,7 @@ class DocumentationGenerator extends Command
             $config = config('jsonrpcdoc.connections.' . $connection);
             if ($config === null) {
                 $this->output->error('Connection "' . $connection . '" not found!');
+
                 return;
             }
             $this->generateDocumentation($config, $connection);
@@ -36,9 +37,10 @@ class DocumentationGenerator extends Command
             $jsonrpcRoutes = config('jsonrpc.routes', []);
             if (empty($jsonrpcRoutes)) {
                 $this->output->error('"' . $name . '": No server address found. Parameter "url" in configuration empty, parameter "routes" in local jsonrpc server empty.');
+
                 return false;
             }
-            
+
             if (is_lumen()) {
                 $connection['url'] = trim(config('jsonrpcdoc.host'), '/') . '/' . trim(array_first($jsonrpcRoutes), '/');
             } else {
@@ -61,15 +63,15 @@ class DocumentationGenerator extends Command
         foreach ($smd->services as $key => $service) {
             if (!isset($groups[$service->group])) {
                 $groups[$service->group] = [
-                    'name' => $service->group,
-                    'methods' => []
+                    'name'    => $service->group,
+                    'methods' => [],
                 ];
                 if (!empty($service->groupName)) {
                     $groups[$service->group]['description'] = $service->groupName;
                 }
             }
 
-            $groups[$service->group]['methods'][$key] = $service;
+            $groups[$service->group]['methods'][$service->name] = $service;
         }
 
         $smd->services = $groups;
@@ -87,7 +89,9 @@ class DocumentationGenerator extends Command
 
     /**
      * Получение SMD-схемы от сервера
+     *
      * @param string $host Адрес сервера
+     *
      * @return bool|mixed
      */
     protected function getSmdScheme($host)
@@ -100,44 +104,59 @@ class DocumentationGenerator extends Command
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: application/json', 'Content-Length: 0']);
         curl_setopt($curl, CURLOPT_USERAGENT, 'JsonRpc Documentation Server');
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        if ($this->option('noSecure')) {
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        } else {
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        }
 
         $json_response = curl_exec($curl);
         curl_close($curl);
         $result = json_decode($json_response);
         if ($result === null) {
             $this->output->error('The host did not return the SMD-scheme. Generating a client is not possible.');
+
             return false;
         }
+
         return $result;
     }
 
     /**
      * Проверка версии SMD
+     *
      * @param array $smd SMD-схема
+     *
      * @return bool
      */
     protected function checkSmd($smd)
     {
         if (empty($smd->SMDVersion) || $smd->SMDVersion !== '2.0') {
             $this->output->error('Host returned an invalid SMD-scheme. Generating a documentation is not possible.');
+
             return false;
         }
+
         return true;
     }
 
     /**
      * Проверка генератора SMD
+     *
      * @param string $smd SMD-схема
+     *
      * @return bool
      */
     protected function checkGenerator($smd)
     {
         if (empty($smd->generator) || $smd->generator !== 'Tochka/JsonRpc') {
             $this->output->note('The host is using an unsupported JsonRpc server. Generating a documentation is not possible.');
+
             return false;
         }
+
         return true;
     }
 }
