@@ -16,7 +16,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
         <div class="wy-side-scroll">
             <div class="wy-side-nav-search">
-                <a href="{{ route('jsonrpcdoc.main', []) }}" class="icon icon-home"> {{ $serviceName }}</a>
+                <a href="{{ route('jsonrpcdoc.main', [], false) }}" class="icon icon-home"> {{ $serviceName }}</a>
                 <div class="version">{{ $serviceVersion }}</div>
 
                 {{--@include('jsonrpcdoc::templates.searchbox')--}}
@@ -32,7 +32,7 @@
 
         <nav class="wy-nav-top" aria-label="top navigation">
             <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-            <a href="{{ route('jsonrpcdoc.main', []) }}">SuperAgent</a>
+            <a href="{{ route('jsonrpcdoc.main', [], false) }}">SuperAgent</a>
         </nav>
 
         <div class="wy-nav-content">

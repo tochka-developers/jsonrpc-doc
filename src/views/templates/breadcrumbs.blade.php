@@ -3,11 +3,11 @@
         @if (is_null($currentGroup))
             <li>Документация</li>
         @else
-            <li><a href="{{ route('jsonrpcdoc.main', []) }}">Документация</a> »</li>
+            <li><a href="{{ route('jsonrpcdoc.main', [], false) }}">Документация</a> »</li>
             @if (is_null($currentMethod))
                 <li>{{ isset($smd['services'][$currentGroup]['description']) ? $smd['services'][$currentGroup]['description'] : 'Группа методов "' . $currentGroup . '"' }}</li>
             @else
-                <li><a href="{{ route('jsonrpcdoc.group', ['group' => $currentGroup]) }}">
+                <li><a href="{{ route('jsonrpcdoc.group', ['group' => $currentGroup], false) }}">
                         {{ isset($smd['services'][$currentGroup]['description']) ? $smd['services'][$currentGroup]['description'] : 'Группа методов "' . $currentGroup . '"' }}
                     </a> »
                 </li>
