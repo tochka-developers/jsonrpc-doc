@@ -4,7 +4,6 @@ namespace Tochka\JsonRpcDoc\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Laravel\Lumen\Http\Request;
 use Tochka\JsonRpcDoc\DocumentationGenerator;
 
 trait ControllerTrait
@@ -217,7 +216,7 @@ trait ControllerTrait
         }
     }
 
-    public function getLinks(Request $request)
+    public function getLinks($request)
     {
 
         $route = $request->route();
