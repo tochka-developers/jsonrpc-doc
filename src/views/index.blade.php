@@ -22,7 +22,11 @@
             <p>Методы:</p>
         @endempty
         <div class="toctree-wrapper compound">
-            @include('jsonrpcdoc::templates.menu', ['exposed' => true, 'parent' => $currentGroup])
+            @isLumen
+                @include('jsonrpcdoc::templates.menuLumen', ['exposed' => true, 'parent' => $currentGroup])
+            @else
+                @include('jsonrpcdoc::templates.menu', ['exposed' => true, 'parent' => $currentGroup])
+            @endisLumen
         </div>
     </div>
 @endsection
