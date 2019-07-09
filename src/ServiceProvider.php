@@ -2,6 +2,7 @@
 
 namespace Tochka\JsonRpcDoc;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Tochka\JsonRpcDoc\Controllers\LaravelController;
 use Tochka\JsonRpcDoc\Controllers\LumenController;
@@ -25,6 +26,10 @@ class ServiceProvider extends BaseServiceProvider
         ], 'public');
 
         $this->loadViewsFrom(__DIR__ . '/views', 'jsonrpcdoc');
+
+        Blade::if('isLumen', function () {
+            return is_lumen();
+        });
 
     }
 

@@ -16,14 +16,23 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
         <div class="wy-side-scroll">
             <div class="wy-side-nav-search">
-                <a href="{{ route('jsonrpcdoc.main', [], false) }}" class="icon icon-home"> {{ $serviceName }}</a>
+                @isLumen
+                    <a href="{{ route('jsonrpcdoc.main') }}" class="icon icon-home"> {{ $serviceName }}</a>
+                @else
+                    <a href="{{ route('jsonrpcdoc.main', [], false) }}" class="icon icon-home"> {{ $serviceName }}</a>
+                @endisLumen
+
                 <div class="version">{{ $serviceVersion }}</div>
 
                 {{--@include('jsonrpcdoc::templates.searchbox')--}}
             </div>
 
             <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                @include('jsonrpcdoc::templates.menu', ['exposed' => false])
+                @isLumen
+                    @include('jsonrpcdoc::templates.menuLumen', ['exposed' => false])
+                @else
+                    @include('jsonrpcdoc::templates.menu', ['exposed' => false])
+                @endisLumen
             </div>
         </div>
     </nav>
@@ -32,13 +41,21 @@
 
         <nav class="wy-nav-top" aria-label="top navigation">
             <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-            <a href="{{ route('jsonrpcdoc.main', [], false) }}">SuperAgent</a>
+            @isLumen
+                <a href="{{ route('jsonrpcdoc.main') }}">{{ env('APP_NAME') }}</a>
+            @else
+                <a href="{{ route('jsonrpcdoc.main', [], false) }}">{{ env('APP_NAME') }}</a>
+            @endisLumen
         </nav>
 
         <div class="wy-nav-content">
             <div class="rst-content">
 
-                @include('jsonrpcdoc::templates.breadcrumbs')
+                @isLumen
+                    @include('jsonrpcdoc::templates.breadcrumbsLumen')
+                @else
+                    @include('jsonrpcdoc::templates.breadcrumbs')
+                @endisLumen
 
                 <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
                     <div itemprop="articleBody">
